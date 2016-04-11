@@ -1,0 +1,15 @@
+1. Создание пассажира
+	
+	Post
+	Url : http://localhost:8080/main/passenger
+
+	Параметры  в теле запроса json вида 
+											{
+										   	"username": "Andry",
+
+										   	"email": "yandexru",
+
+										   "password": "12345"
+											}
+
+	Важно! В Headers запроса установить заголовок: Content-Type: application/json;charset=UTF-8

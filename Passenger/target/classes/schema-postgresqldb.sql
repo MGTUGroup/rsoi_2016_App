@@ -1,0 +1,4 @@
+CREATE TABLE test_test (
+  ID INT,
+  NAME VARCHAR(100) NOT NULL
+)

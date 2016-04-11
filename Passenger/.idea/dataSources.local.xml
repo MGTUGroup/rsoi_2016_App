@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="PostgreSQL - rsoi@localhost" uuid="2362a5ab-570a-40e2-9367-0be5c1ea710e">
+      <secret-storage>master_key</secret-storage>
+      <user-name>andry</user-name>
+      <schema-pattern>rsoi.pg_catalog rsoi.public</schema-pattern>
+      <default-schemas>rsoi.pg_catalog rsoi.public</default-schemas>
+    </data-source>
+  </component>
+</project>

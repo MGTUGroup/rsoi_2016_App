@@ -1,0 +1,11 @@
+/home/user/rsoi_taxi_service/Passenger/src/main/java/org/psg/model/Passenger.java
+/home/user/rsoi_taxi_service/Passenger/src/main/java/org/psg/controller/PassengerController.java
+/home/user/rsoi_taxi_service/Passenger/src/main/java/org/psg/repository/passengerRepository/PassengerService.java
+/home/user/rsoi_taxi_service/Passenger/src/main/java/org/psg/repository/statusRepository/StatusServiceImpl.java
+/home/user/rsoi_taxi_service/Passenger/src/main/java/org/psg/serializable/CustomListSerializer.java
+/home/user/rsoi_taxi_service/Passenger/src/main/java/org/psg/Application.java
+/home/user/rsoi_taxi_service/Passenger/src/main/java/org/psg/repository/statusRepository/StatusService.java
+/home/user/rsoi_taxi_service/Passenger/src/main/java/org/psg/repository/passengerRepository/PassengerServiceImpl.java
+/home/user/rsoi_taxi_service/Passenger/src/main/java/org/psg/repository/passengerRepository/PassengerRepository.java
+/home/user/rsoi_taxi_service/Passenger/src/main/java/org/psg/model/Status.java
+/home/user/rsoi_taxi_service/Passenger/src/main/java/org/psg/repository/statusRepository/StatusRepository.java
