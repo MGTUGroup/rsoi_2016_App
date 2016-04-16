@@ -1,0 +1,105 @@
+1. Создание таксиста
+	
+	Post
+	Url : http://localhost:5002/register
+
+	Параметры  в теле запроса json вида:								
+									{
+									  	"username": "Andry",
+									  	"email": "yandexru",
+									  	"password": "12345",
+									  	"model": "audy",
+										"mark": "A8",
+                                    	"statenumber": "A001MP",
+										"region": "77"
+									}
+
+	Важно! В Headers запроса установить заголовок: Content-Type: application/json;charset=UTF-8
+
+
+2. Аторизация таксиста
+
+	Post
+	Url : http://localhost:5002/login
+
+	Параметры  в теле запроса json вида:
+	{
+									 
+		"email": "yandexru",
+		"password": "12345"
+									
+	}
+
+	Важно! В Headers запроса установить заголовок: Content-Type: application/json;charset=UTF-8
+
+3. Проверка состояния таксиста
+
+	Post
+	Url : http://localhost:5002/check_status
+
+	Параметры  в теле запроса json вида:
+	{
+		"user_id": 3								 
+	}
+
+	Важно! В Headers запроса установить заголовок: Content-Type: application/json;charset=UTF-8
+
+
+4. Изменить состояние таксиста
+
+	Post
+	Url : http://localhost:5002/change_status
+
+	Параметры  в теле запроса json вида:
+	{
+		"user_id": 3,
+		"status": "busy"							 
+	}
+
+	Возможные состояния: free, busy, transit, awaiting. 
+
+	Важно! В Headers запроса установить заголовок: Content-Type: application/json;charset=UTF-8
+
+5. Прием координат от таксиста
+	
+	Post
+	Url : http://localhost:5002/post_coordinates
+
+	Параметры  в теле запроса json вида:
+	{
+		"user_id": 3,
+		"coordinate":
+		{
+			"x": 10,
+			"y": 10
+		}						 
+	}
+
+	Важно! В Headers запроса установить заголовок: Content-Type: application/json;charset=UTF-8
+
+
+6. Поиск таксиста в заданной местности
+
+	Post
+	Url : http://localhost:5002/check_taxi
+
+	Параметры  в теле запроса json вида:
+	{
+		"radius": 5,
+		"coordinate":
+		{
+			"x": 2,
+			"y": 2
+		}						 
+	}
+
+	У таксиста должен, помимо координа попадающих в заданную окружность, должен быть статус "free", для его обнаружения.
+	Важно! В Headers запроса установить заголовок: Content-Type: application/json;charset=UTF-8
+
+7. Список таксистов
+
+	Get
+	Url : http://localhost:5002/taxi
+
+
+	
