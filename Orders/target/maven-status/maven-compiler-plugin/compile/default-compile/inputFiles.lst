@@ -1,0 +1,15 @@
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/repository/orderRepository/OrderService.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/repository/orderRepository/OrderRepository.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/controller/OrderController.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/Application.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/serializableObject/PostCoordinates.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/repository/orderRepository/OrderServiceImpl.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/serializableObject/ParametrTaxi.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/serializableObject/Coordinate.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/serializableObject/AddTaxi.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/model/Order.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/container/Tuple.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/serializableObject/StopCalculation.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/container/ContainerTaxi.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/container/TaxiData.java
+/home/user/rsoi_taxi_service/Orders/src/main/java/org/order/serializableObject/MakeOrder.java

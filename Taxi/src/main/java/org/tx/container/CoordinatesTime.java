@@ -15,10 +15,11 @@ public class CoordinatesTime {
     private Calendar datetime;
     private Taxi taxi;
 
-    public CoordinatesTime(int x, int y, Calendar datetime){
+    public CoordinatesTime(int x, int y, Calendar datetime, Taxi taxi){
         this.x = x;
         this.y = y;
         this.datetime = datetime;
+        this.taxi = taxi;
     }
 
     public int getX(){ return x;}
@@ -29,5 +30,8 @@ public class CoordinatesTime {
 
     public Calendar getDatetime(){ return this.datetime; }
     public void setDatetime(Date datetime){ this.datetime.setTime(datetime); }
+
+    public Taxi getTaxi(){ return taxi; }
+    public void setTaxi(Taxi _taxi){ this.taxi = _taxi; }
 
 }

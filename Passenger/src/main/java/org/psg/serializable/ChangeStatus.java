@@ -4,23 +4,23 @@ package org.psg.serializable;
  * Created by user on 14.04.16.
  */
 public class ChangeStatus {
-    private Integer value;
+    private Integer user_id;
     private String status;
 
     public ChangeStatus(){}
 
-    public ChangeStatus(Integer value, String status){
-        this.value = value;
+    public ChangeStatus(Integer user_id, String status){
+        this.user_id = user_id;
         this.status = status;
     }
-    public int getValue(){ return value;}
-    public void setValue(int value){ this.value = value;}
+    public int getUser_id(){ return user_id;}
+    public void setUser_id(int user_id){ this.user_id = user_id;}
 
     public String getStatus(){ return status;}
     public void setStatus(String status){ this.status = status;}
 
     public boolean checkFields(){
-        return value != null && status != null;
+        return user_id != null && status != null;
     }
 
 }
