@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <title>WebSockets Hello World</title>
+    <meta charset="utf-8" />
+    <style type="text/css">
+      body {
+        text-align: center;
+        min-width: 500px;
+      }
+    </style>
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="js.cookie.js"></script>
+    <script>
+      log = function(data){
+        $("div#terminal").prepend("</br>" +data);
+        console.log(data);
+      };
+
+      $(document).ready(function () {
+        $("div#message_details").hide()
+
+        $("#order").click(function() {
+          alert("Your order is processed, wait");
+          var x = Math.floor(Math.random() * (100)) + 1;
+          var y = Math.floor(Math.random() * (100)) + 1;
+          $.ajax({
+            type: "POST",
+            url: "http://localhost:8000/make_order",
+            data: {x:x, y:y},
+            dataType: 'xml',
+            crossDomain: true,
+            xhrFields: {withCredentials: true}
+          });
+        });
+
+        $("#cancel").click(function() {
+          $.ajax({
+            type: "POST",
+            url: "http://localhost:8000/concel_order",
+            crossDomain: true,
+            xhrFields: {withCredentials: true}
+          });
+        });
+
+        var ws = new WebSocket("ws://localhost:8888/ws");
+
+        ws.onmessage = function(evt) {
+          alert(evt.data);
+          var user_type = Cookies.get('my_type');
+          alert(user_type);
+          if (user_type == "accepted")
+          {
+            $("#order").attr('disabled', true);
+            $("#cancel").attr('disabled', false);
+          }
+          else
+          {
+            $("#order").attr('disabled', false);
+            $("#cancel").attr('disabled', true);
+          }
+        };
+
+        ws.onclose = function(evt) {
+          $("div#message_details").empty();
+
+        };
+
+        ws.onopen = function(evt) {
+          $("div#message_details").show();
+        };
+      });
+    </script>
+  </head>
+
+  <body>
+    <h1>Homepage of passenger</h1>
+    <div id="terminal"></div>
+    <div id="make_order">
+      <input type="submit" id="order" value="Make an order" />
+    </div>
+    <div id="cancel_order">
+        <input type="submit" id="cancel" value="Cancel the order" />
+    </div>
+    <form method="get" action="http://localhost:8000/logout">
+        <input type="submit" value="Log Out">
+    </form>
+  </body>
+</html>
