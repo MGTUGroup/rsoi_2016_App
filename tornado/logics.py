@@ -230,10 +230,12 @@ class Make_orderHandler(Change_statusHandler):
 
     def check_taxi(self, coordinate, radius):
         try:
+            print(simplejson.dumps(dict(radius=radius, coordinate=coordinate)))
             client = tornado.httpclient.HTTPClient()
             response = client.fetch(url_for_taxi + 'check_taxi', method='POST',
 												headers={"Content-Type": "application/json; charset=UTF-8"},
                                                 body=simplejson.dumps(dict(radius=radius, coordinate=coordinate)))
+            print(response)
             taxi = simplejson.loads(response.body)
             return taxi
         except:
@@ -260,6 +262,7 @@ class Concel_orderHandler(Change_statusHandler):
     @tornado.gen.engine
     def post(self):
         pass_id = tornado.escape.json_decode(self.request.body)['pass_id']
+        self.change_status('passenger', 'free', pass_id)
         try:
             client = tornado.httpclient.AsyncHTTPClient()
             response = yield tornado.gen.Task(client.fetch, url_for_order + 'cancel_order', method='POST',
@@ -267,7 +270,6 @@ class Concel_orderHandler(Change_statusHandler):
                                                 body=json.dumps(dict(pass_id=pass_id)))
             taxi_id = json.loads(response.body)['taxi_id']
             self.change_status('taxi', 'free', taxi_id)
-            self.change_status('passenger', 'free', pass_id)
             self.write(json.dumps(dict(status=200, taxi_id=taxi_id)))
         except:
             self.send_error(response.error)
@@ -306,6 +308,7 @@ class Stop_calculationHandler(Change_statusHandler):
                 self.change_status('taxi', 'free', taxi_id)
                 cost = simplejson.loads(response.body)['cost']
                 pass_id = simplejson.loads(response.body)['pass_id']
+                self.change_status('passenger', 'free', pass_id)
                 self.write(simplejson.dumps(dict(status=200, pass_id=pass_id, cost=cost)))
             else:
                 self.send_error(500)

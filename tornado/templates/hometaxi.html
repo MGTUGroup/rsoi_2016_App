@@ -1,19 +1,31 @@
 <!doctype html>
 <html>
+  {% include "base.html" %}
   <head>
-    <title>Homepage of cabdriver</title>
     <meta charset="utf-8" />
     <style type="text/css">
       body {
         text-align: center;
         min-width: 500px;
       }
+      input.new {
+            background: -moz-linear-gradient(#D0ECF4, #5BC9E1, #D0ECF4);
+            background: -webkit-gradient(linear, 0 0, 0  100%, from(#D0ECF4), to(#D0ECF4), color-stop(0.5, #5BC9E1));
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BBD6', endColorstr='#EBFFFF');
+            padding: 3px 7px;
+            align: center;
+            color: #333;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+            border: 1px solid #666;
+        }
     </style>
     <script src="http://code.jquery.com/jquery.min.js"></script>
     <script src="js.cookie.js"></script>
     <script>
       log = function(data){
-        $("div#terminal").prepend("</br>" +data);
+        $("div#terminal").prepend("</br>" + data);
         console.log(data);
       };
 
@@ -38,6 +50,8 @@
         }, 5000);
 
         $("#start").click(function() {
+          $("#start").attr("disabled", true);
+          $("#stop").attr("disabled", false);
           $.ajax({
             type: "POST",
             url: "http://localhost:8000/start_calc",
@@ -49,6 +63,8 @@
         });
 
         $("#stop").click(function() {
+          $("#stop").attr("disabled", true);
+          $("#start").attr("disabled", false);
           $.ajax({
             type: "POST",
             url: "http://localhost:8000/stop_calc",
@@ -63,15 +79,20 @@
           alert(evt.data);
           var user_type = Cookies.get('my_type');
           alert(user_type);
-          if (user_type == "accepted")
+          if (user_type == "free")
           {
-            $("#order").attr('disabled', true);
-            $("#cancel").attr('disabled', false);
+            $("#stop").attr('disabled', true);
+            $("#start").attr('disabled', true);
+          }
+          else if (user_type == "busy")
+          {
+            $("#stop").attr('disabled', true);
+            $("#start").attr('disabled', false);
           }
           else
           {
-            $("#order").attr('disabled', false);
-            $("#cancel").attr('disabled', true);
+            $("#stop").attr('disabled', false);
+            $("#start").attr('disabled', true);
           }
         };
 
@@ -91,13 +112,10 @@
     <h1>Homepage of cabdriver</h1>
     <div id="terminal"></div>
     <div id="start_trip">
-      <input type="submit" id="start" value="Start trip" />
+      <p><input type="submit" class="new" id="start" value="Start trip" /></p>
     </div>
     <div id="stop_trip">
-        <input type="submit" id="stop" value="Stop trip" />
+        <p><input type="submit" class="new" id="stop" value="Stop trip" /></p>
     </div>
-    <form method="get" action="http://localhost:8000/logout">
-        <input type="submit" value="Log Out">
-    </form>
   </body>
 </html>

@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html>
+    {% include "base.html" %}
+    <style type="text/css">
+        button.new {
+            background: -moz-linear-gradient(#D0ECF4, #5BC9E1, #D0ECF4);
+            background: -webkit-gradient(linear, 0 0, 0  100%, from(#D0ECF4), to(#D0ECF4), color-stop(0.5, #5BC9E1));
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BBD6', endColorstr='#EBFFFF');
+            padding: 3px 7px;
+            align: center;
+            color: #333;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+            border: 1px solid #666;
+        }
+    </style>
     <body>
-        <h1>Taxi service</h1>
-            {% if flash_msg %}
-            <div class="error">
-                {{ flash_msg }}
-            </div>
-            {% end %}
-        <form method="get" action="/type">
-            <button type="submit">Register</button>
-        </form>
-        <form method="get" action="/login">
-            <button type="submit">Log in</button>
-        </form>
+        <center>
+            <form method="get" action="/type">
+                <button class="new" type="submit" align="center">Register</button>
+            </form>
+        </center>
     </body>
 </html>

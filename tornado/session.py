@@ -56,7 +56,7 @@ def login():
             ses = Session(user_id=user_id, user_type=user_type, token=token, expire_time=expire_time)
             db.session.add(ses)
             db.session.commit()
-            #memc.set(token, [user_id, user_type, expire_time], time=3000)
+            memc.set(token, [user_id, expire_time], time=3000)
             return jsonify(ses.to_json()), 200
         else:
             if ses.expire_time > datetime.now():
@@ -64,7 +64,7 @@ def login():
                 token = ses.token
                 db.session.add(ses)
                 db.session.commit()
-                #memc.set(token, [user_id, user_type], time=3000)
+                memc.set(token, [user_id, ses.expire_time], time=3000)
                 return jsonify(ses.to_json()), 200
             else:
                 memc.delete(ses.token)
@@ -78,18 +78,26 @@ def login():
 def token():
     try:
         token = request.json.get('token')
-        #ses = memc.get(token)
-        #if ses is not None:
-         #   user_id = ses[0]
-          #  expire_time = ses[1]
-        #else:
-        ses = Session.query.filter_by(token=token).first()
-        user_id = ses.user_id
-        user_type = ses.user_type
-        expire_time = ses.expire_time
-        if ses is not None and expire_time > datetime.now():
-            return jsonify(dict(user_id=user_id, user_type=user_type)), 200
-        return '', 404
+        ses = memc.get(token)
+        if ses is not None:
+            print('from memc')
+            user_id = ses[0]
+            expire_time = ses[1]
+            print(user_id)
+            print(expire_time)
+            if ses is not None and expire_time > datetime.now():
+                return jsonify(dict(user_id=user_id)), 200
+        else:
+            ses = Session.query.filter_by(token=token).first()
+            user_id = ses.user_id
+            expire_time = ses.expire_time
+            print('from db')
+            print(user_id)
+            print(expire_time)
+            if ses is not None and expire_time > datetime.now():
+                memc.set(token, [user_id, ses.expire_time], time=3000)
+                return jsonify(dict(user_id=user_id)), 200
+            return '', 404
     except:
         return '', 500
 

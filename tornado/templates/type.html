@@ -1,16 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Taxi service</title>
-</head>
-<body>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Bootstrap 101 Template</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    </head>
+
+{% block page_content %}
+    <style type="text/css">
+        button.new {
+            background: -moz-linear-gradient(#D0ECF4, #5BC9E1, #D0ECF4);
+            background: -webkit-gradient(linear, 0 0, 0  100%, from(#D0ECF4), to(#D0ECF4), color-stop(0.5, #5BC9E1));
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BBD6', endColorstr='#EBFFFF');
+            padding: 3px 7px;
+            color: #333;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+            border: 1px solid #666;
+        }
+    </style>
+<div class="page-header" style="color:#5BC9E1; text-align: center; min-width: 100px">
     <h1>Choose your type</h1>
-    <form method="get" action="/register2">
-        <button type="submit">Taxi</button>
-    </form>
-    <form method="get" action="/register">
-        <button type="submit">Passenger</button>
-    </form>
-</body>
+</div>
+    <center>
+        <form method="get" action="/register2">
+            <p><button class="new" type="submit">Taxi</button></p>
+            <p><button class="new" type="submit">Passenger</button></p>
+        </form>
+    </center>
+{% end %}
 </html>

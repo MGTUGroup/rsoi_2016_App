@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  </head>
 
-{% block title %}Dictionary of python{% end %}
-
-{% block head %}
-    {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-{% end %}
-
-{% block navbar %}
-    <div class="navbar navbar-default" role="navigation" style="background-color:#209dd3">
+  {% block navbar %}
+    <div class="navbar navbar-default" role="navigation">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -18,35 +18,28 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" style="color: #fdff00"; href="/">Dictionary of python</a>
+                <a class="navbar-brand" style="color: #5BC9E1"; href="/">Taxi service</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="http://localhost:5000/list" style="color: #fdff00">List of ALL</a></li>
                     {% if login %}
-                        <li><a href="http://localhost:5000/logout" style="color: #fdff00">Log Out</a></li>
+                        <li><a href="http://localhost:8000/logout" style="color: #5BC9E1">Log Out</a></li>
                     {% else %}
-                        <li><a href="{{ url_for('login') }}" style="color: #fdff00">Log In</a></li>
+                        <li><a href="http://localhost:8000/login" style="color: #5BC9E1">Log In</a></li>
                     {% end %}
                 </ul>
             </div>
         </div>
     </div>
-{% end %}
+  {% end %}
 
-{% block content %}
+  {% block content %}
     <div class="container">
-        {% for message in get_flashed_messages() %}
-            <div class="alert alert-warning">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message }}
+        {% if flash_msg %}
+            <div class="error">
+                {{ flash_msg }}
             </div>
         {% end %}
-        {% block page_content %}{% end %}
     </div>
-{% end %}
-
-{% block scripts %}
-    {{ super() }}
-    {{ moment.include_moment() }}
-{% end %}
+  {% end %}
+</html>

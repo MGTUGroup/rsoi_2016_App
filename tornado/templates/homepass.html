@@ -1,13 +1,25 @@
 <!doctype html>
 <html>
+  {% include "base.html" %}
   <head>
-    <title>WebSockets Hello World</title>
     <meta charset="utf-8" />
     <style type="text/css">
-      body {
-        text-align: center;
-        min-width: 500px;
-      }
+        body {
+          text-align: center;
+          min-width: 500px;
+        }
+        input.new {
+            background: -moz-linear-gradient(#D0ECF4, #5BC9E1, #D0ECF4);
+            background: -webkit-gradient(linear, 0 0, 0  100%, from(#D0ECF4), to(#D0ECF4), color-stop(0.5, #5BC9E1));
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BBD6', endColorstr='#EBFFFF');
+            padding: 3px 7px;
+            align: center;
+            color: #333;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+            border: 1px solid #666;
+        }
     </style>
     <script src="http://code.jquery.com/jquery.min.js"></script>
     <script src="js.cookie.js"></script>
@@ -47,12 +59,12 @@
 
         ws.onmessage = function(evt) {
           alert(evt.data);
-          var user_type = Cookies.get('my_type');
+          var user_type = Cookies.get("my_type");
           alert(user_type);
           if (user_type == "accepted")
           {
-            $("#order").attr('disabled', true);
-            $("#cancel").attr('disabled', false);
+            $("#order").attr("disabled", true);
+            $("#cancel").attr("disabled", false);
           }
           else
           {
@@ -76,14 +88,11 @@
   <body>
     <h1>Homepage of passenger</h1>
     <div id="terminal"></div>
-    <div id="make_order">
-      <input type="submit" id="order" value="Make an order" />
-    </div>
-    <div id="cancel_order">
-        <input type="submit" id="cancel" value="Cancel the order" />
-    </div>
-    <form method="get" action="http://localhost:8000/logout">
-        <input type="submit" value="Log Out">
-    </form>
+      <div id="make_order">
+        <p><input type="submit" class="new" id="order" value="Make an order" /></p>
+      </div>
+      <div id="cancel_order">
+          <p><input type="submit" class="new" id="cancel" value="Cancel the order"  /></p>
+      </div>
   </body>
 </html>

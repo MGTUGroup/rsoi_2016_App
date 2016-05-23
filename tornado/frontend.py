@@ -80,13 +80,47 @@ class MyHandler(tornado.web.RequestHandler):
 		flash = pickle.dumps(flash)
 		self.set_cookie(self.cookie_name(key), tornado.escape.url_escape(flash))
 
-class IndexHandler(MyHandler):
+class Check_sessionHandler(tornado.web.RequestHandler):
+	@tornado.web.asynchronous
+	@tornado.gen.engine
+	def post (self):
+		token = self.get_argument('token')
+		client = tornado.httpclient.HTTPClient()
+		response = yield tornado.gen.Task(client.fetch, url_for_logics + 'token', method='POST',
+										  headers={"Content-Type": "application/json"},
+										  body=simplejson.dumps(dict(token=token)))
+
+		if response.code == 200:
+			self.write(simplejson.loads(response.body)['user_id'])
+		else:
+			self.write('unregistered')
+		self.finish()
+
+	def check_session(self):
+		token = self.get_cookie('my_session')
+		client = tornado.httpclient.HTTPClient()
+		response = client.fetch(url_for_logics + 'token',method='POST',
+								headers={"Content-Type": "application/json"},
+								body=simplejson.dumps(dict(token=token)))
+		if response.code == 200:
+			return simplejson.loads(response.body)['user_id']
+		else:
+			return 'unregistered'
+
+class IndexHandler(MyHandler, Check_sessionHandler):
 	def get(self):
+		try:
+			user_name = self.check_session()
+		except:
+			user_name = 'unregistered'
+		login_status = False
+		if user_name != 'unregistered':
+			login_status = True
 		if self.get_flash('error'):
 			flash = self.get_flash('error')
-			self.render('index.html', form=flash.data, flash_msg=flash.message)
+			self.render('index.html', form=flash.data, flash_msg=flash.message, login=login_status)
 		else:
-			self.render('index.html',flash_msg=None)
+			self.render('index.html',flash_msg=None, login=login_status)
 
 class Type_choiceHandler(tornado.web.RequestHandler):
 	def get(self):
@@ -225,18 +259,6 @@ class LogoutHandler (tornado.web.RequestHandler):
 		self.clear_cookie('my_session')
 		self.clear_cookie('my_type')
 		self.redirect('/')
-
-class Check_sessionHandler(tornado.web.RequestHandler):
-	def check_session(self):
-		token = self.get_cookie('my_session')
-		client = tornado.httpclient.HTTPClient()
-		response = client.fetch(url_for_logics + 'token',method='POST',
-								headers={"Content-Type": "application/json"},
-								body=simplejson.dumps(dict(token=token)))
-		if response.code == 200:
-			return simplejson.loads(response.body)['user_id']
-		else:
-			return 'unregistered'
 
 class TokenHandler(tornado.web.RequestHandler):
 	def get_token(self, user_id, user_type):
@@ -458,7 +480,7 @@ if __name__ == "__main__":
 			(r'/register2', Registration2Handler), (r'/login', LoginHandler), (r'/logout', LogoutHandler),
 			(r'/make_order', Make_orderHandler), (r'/concel_order', Concel_orderHandler),
 			(r'/start_calc', Start_calculationHandler), (r'/stop_calc', Stop_calculationHandler),
-			(r'/coordinates', Post_coordinatesHandler)],
+			(r'/coordinates', Post_coordinatesHandler), (r'/check_session', Check_sessionHandler)],
 	template_path = os.path.join(os.path.dirname(__file__), "templates"),
 	static_path = os.path.join(os.path.dirname(__file__), "static"))
 	http_server = tornado.httpserver.HTTPServer(app)

@@ -1,22 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-
-{% block page_content %}
-<div class="page-header">
-    <h1>Register</h1>
-    {% if flash_msg %}
-        <div class="error">
-            {%for k in flash_msg%}
-                <br>{{flash_msg[k][0]}}</br>
-            {% end %}
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Bootstrap 101 Template</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    </head>
+    {% block page_content %}
+        <div class="page-header" style="color:#5BC9E1; text-align: center; min-width: 100px">
+            <h1>Register</h1>
         </div>
-    {% end %}
-</div>
-<form enctype="multipart/form-data" action="/register" method="post">
-    <p>Username<br><input id="username" name="username" type="text" value=""></p>
-    <p>Email<br><input id="email" name="email" type="text" value=""></p>
-    <p>Password<br><input id="password" name="password" type="password" value=""></p>
-    <p>Confirm password<br><input id="password2" name="password2" type="password" value=""></p>
-    <input type="submit" value="Register">
-</form>
+    <div class="col-xs-4 col-md-offset-4">
+        <div class="well">
+            <form enctype="multipart/form-data" action="/register" method="post">
+                <p>Username<br><input id="username" name="username" type="text" value=""></p>
+                <p>Email<br><input id="email" name="email" type="text" value=""></p>
+                <p>Password<br><input id="password" name="password" type="password" value=""></p>
+                <p>Confirm password<br><input id="password2" name="password2" type="password" value=""></p>
+                <input type="submit" value="Register">
+            </form>
+        </div>
+    </div>
 {% end %}
+
+{% block content %}
+    <div class="container">
+        {% if flash_msg %}
+            <div class="error">
+                {{ flash_msg }}
+            </div>
+        {% end %}
+    </div>
+  {% end %}
+</html>
