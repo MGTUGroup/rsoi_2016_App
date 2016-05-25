@@ -71,7 +71,8 @@ class LoginHandler(tornado.web.RequestHandler):
             elif response.code == 200:
                 user_type = 'taxi'
                 user_id = json.loads(response.body)['taxi_id']
-                token = self.login_for_session(user_id, user_type)
+                user_name = json.loads(response.body)['name']
+                token = self.login_for_session(user_id, user_type, user_name)
                 self.write(json.dumps(dict(status=200, token=token, user_type='taxi')))
         except:
             self.send_error(response.error)
@@ -86,19 +87,20 @@ class LoginHandler(tornado.web.RequestHandler):
                 elif response.code == 200:
                     user_type = 'passenger'
                     user_id = json.loads(response.body)['pass_id']
-                    token = self.login_for_session(user_id, user_type)
+                    user_name = json.loads(response.body)['name']
+                    token = self.login_for_session(user_id, user_type, user_name)
                     self.write(simplejson.dumps(dict(status=200, token=token, user_type=user_type)))
             except:
                 self.send_error(response.error)
         self.finish()
 
-    def login_for_session(self, user_id=None, user_type=None):
+    def login_for_session(self, user_id=None, user_type=None, user_name=None):
         if user_id is not None and user_type is not None:
             try:
                 client = tornado.httpclient.HTTPClient()
                 response = client.fetch(url_for_session + 'login', method='POST',
                                         headers={"Content-Type": "application/json; charset=UTF-8"},
-                                        body=json.dumps(dict(user_id=user_id, user_type=user_type)))
+                                        body=json.dumps(dict(user_id=user_id, user_type=user_type, user_name=user_name)))
                 token = json.loads(response.body)['token']
                 return token
             except:
@@ -111,17 +113,18 @@ class Check_sessionHandler(tornado.web.RequestHandler):
     #@tornado.gen.engine
     def post(self):
         token = tornado.escape.json_decode(self.request.body)['token']
-
         try:
             client = tornado.httpclient.HTTPClient()
             response = client.fetch(url_for_session + 'token', method='POST',
 									headers={"Content-Type": "application/json; charset=UTF-8"},
                                     body=json.dumps(dict(token=token)))
+            print(response.code)
             if response.code == 404:
                 self.set_status(404)
             elif response.code == 200:
                 user_id = json.loads(response.body)['user_id']
-                self.write(json.dumps(dict(status=200, user_id=user_id)))
+                user_name = json.loads(response.body)['user_name']
+                self.write(json.dumps(dict(status=200, user_id=user_id, user_name=user_name)))
             #self.finish()
         except:
             self.send_error(response.error)
@@ -178,6 +181,44 @@ class Check_statusHandler(tornado.web.RequestHandler):
         self.finish()
 
 class Change_statusHandler(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.engine
+    def post(self):
+        data = tornado.escape.json_decode(self.request.body)
+        token = data['token']
+        status = data['status']
+        try:
+            client = tornado.httpclient.AsyncHTTPClient()
+            response = yield tornado.gen.Task(client.fetch, url_for_session + 'token', method='POST',
+                                              headers={"Content-Type": "application/json; charset=UTF-8"},
+                                              body=json.dumps(dict(token=token)))
+            if response.code == 404:
+                self.set_status(404)
+            elif response.code == 200:
+                user_id = json.loads(response.body)['user_id']
+                user_type = json.loads(response.body)['user_type']
+                if user_type == 'taxi':
+                    try:
+                        response = yield tornado.gen.Task(client.fetch, url_for_taxi + 'change_status', method='POST',
+                                                  headers={"Content-Type": "application/json; charset=UTF-8"},
+                                                  body=json.dumps(dict(status=status, user_id=user_id)))
+                        if response.code == 200:
+                            self.set_status(200)
+                    except:
+                        self.send_error(response.error)
+                elif user_type == 'passenger':
+                    try:
+                        response = yield tornado.gen.Task(client.fetch, url_for_passenger + 'change_status', method='POST',
+                                                  headers={"Content-Type": "application/json; charset=UTF-8"},
+                                                  body=json.dumps(dict(status=status, user_id=user_id)))
+                        if response.code == 200:
+                            self.set_status(200)
+                    except:
+                        self.send_error(response.error)
+        except:
+            self.send_error(response.error)
+        self.finish()
+
     @tornado.web.asynchronous
     @tornado.gen.engine
     def change_status(self, user_type, status, user_id):

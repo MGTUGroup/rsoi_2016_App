@@ -2,6 +2,7 @@ import tornado.httpserver
 import tornado.websocket
 import tornado.ioloop
 from urllib import urlencode
+import simplejson
 import pickle
 import tornado.web
 import socket
@@ -47,11 +48,12 @@ class Broadcast1Handler(MyHandler):
             response = client.fetch(url_for_frontend + 'check_session', method='POST',
                                     body=body2)
             if response.body != 'unregistered':
+                user_name = simplejson.loads(response.body)['user_name']
                 if self.get_flash('error'):
                     flash = self.get_flash('error')
-                    self.render('templates/homepass.html', form=flash.data, flash_msg=flash.message, login=True)
+                    self.render('templates/homepass.html', form=flash.data, flash_msg=flash.message, login=True, user_name=user_name)
                 else:
-                    self.render('templates/homepass.html', flash_msg=None, login=True)
+                    self.render('templates/homepass.html', flash_msg=None, login=True, user_name=user_name)
             else:
                 flash = Flash('You must sign in')
                 self.set_flash(flash)
@@ -70,11 +72,12 @@ class Broadcast2Handler(MyHandler):
             response = client.fetch(url_for_frontend + 'check_session', method='POST',
                                     body=body2)
             if response.body != 'unregistered':
+                user_name = simplejson.loads(response.body)['user_name']
                 if self.get_flash('error'):
                     flash = self.get_flash('error')
-                    self.render('templates/hometaxi.html', form=flash.data, flash_msg=flash.message, login=True)
+                    self.render('templates/hometaxi.html', form=flash.data, flash_msg=flash.message, login=True, user_name=user_name)
                 else:
-                    self.render('templates/hometaxi.html', flash_msg=None, login=True)
+                    self.render('templates/hometaxi.html', flash_msg=None, login=True, user_name=user_name)
             else:
                 flash = Flash('You must sign in')
                 self.set_flash(flash)

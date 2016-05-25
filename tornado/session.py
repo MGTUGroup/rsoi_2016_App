@@ -28,35 +28,41 @@ class Session(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String, unique=False, index=True)
     user_type = db.Column(db.String(64), unique=False, index=True)
-    token = db.Column(db.String(128), unique=True,index=True)
+    user_name = db.Column(db.String(64), unique=False, index=True)
+    token = db.Column(db.String(128), unique=True, index=True)
     expire_time = db.Column(db.DateTime, unique=True)
 
     def to_json(self):
         session_in_json = {
             'token': self.token,
             'user_id': self.user_id,
-            'user_type': self.user_type
+            'user_type': self.user_type,
+            'user_name': self.user_name
         }
         return session_in_json
 
     def __repr__(self):
-        return '<User_id {} Token {} User_type {}>'.format(self.user_id, self.token, self.user_type)
+        return '<User_id {} Token {} User_type {} User_name {}>'.format(self.user_id, self.token, self.user_type, self.user_name)
 
 @app.route('/login/', methods=['POST'])
 def login():
     try:
         user_id = request.json.get('user_id')
         user_type = request.json.get('user_type')
+        user_name = request.json.get('user_name')
+        print(user_id)
+        print(user_type)
+        print(user_name)
         #ses = memc.get(user_id)
         #if ses is None:
         ses = Session.query.filter_by(user_id=user_id).filter_by(user_type=user_type).first()
         if ses is None:
             token = sha256(str(uuid4()).encode('UTF-8')).hexdigest()
             expire_time = datetime.now() + timedelta(days=30)
-            ses = Session(user_id=user_id, user_type=user_type, token=token, expire_time=expire_time)
+            ses = Session(user_id=user_id, user_type=user_type, user_name=user_name, token=token, expire_time=expire_time)
             db.session.add(ses)
             db.session.commit()
-            memc.set(token, [user_id, expire_time], time=3000)
+            memc.set(token, [user_id, expire_time, user_type, user_name], time=3000)
             return jsonify(ses.to_json()), 200
         else:
             if ses.expire_time > datetime.now():
@@ -64,7 +70,7 @@ def login():
                 token = ses.token
                 db.session.add(ses)
                 db.session.commit()
-                memc.set(token, [user_id, ses.expire_time], time=3000)
+                memc.set(token, [user_id, ses.expire_time, user_type, user_name], time=3000)
                 return jsonify(ses.to_json()), 200
             else:
                 memc.delete(ses.token)
@@ -83,20 +89,22 @@ def token():
             print('from memc')
             user_id = ses[0]
             expire_time = ses[1]
+            user_type = ses[2]
+            user_name = ses[3]
             print(user_id)
-            print(expire_time)
             if ses is not None and expire_time > datetime.now():
-                return jsonify(dict(user_id=user_id)), 200
+                return jsonify(dict(user_id=user_id, user_type=user_type, user_name=user_name)), 200
         else:
             ses = Session.query.filter_by(token=token).first()
             user_id = ses.user_id
             expire_time = ses.expire_time
+            user_type = ses.user_type
+            user_name = ses.user_name
             print('from db')
             print(user_id)
-            print(expire_time)
             if ses is not None and expire_time > datetime.now():
-                memc.set(token, [user_id, ses.expire_time], time=3000)
-                return jsonify(dict(user_id=user_id)), 200
+                memc.set(token, [user_id, expire_time, user_type, user_name], time=3000)
+                return jsonify(dict(user_id=user_id, user_type=user_type, user_name=user_name)), 200
             return '', 404
     except:
         return '', 500

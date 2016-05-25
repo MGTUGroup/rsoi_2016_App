@@ -91,7 +91,10 @@ class Check_sessionHandler(tornado.web.RequestHandler):
 										  body=simplejson.dumps(dict(token=token)))
 
 		if response.code == 200:
-			self.write(simplejson.loads(response.body)['user_id'])
+			data = simplejson.loads(response.body)
+			user_id = data['user_id']
+			user_name = data['user_name']
+			self.write(simplejson.dumps(dict(user_id=user_id, user_name=user_name)))
 		else:
 			self.write('unregistered')
 		self.finish()
@@ -255,10 +258,19 @@ class LoginHandler (MyHandler):
 		self.finish()
 
 class LogoutHandler (tornado.web.RequestHandler):
+	@tornado.web.asynchronous
+	@tornado.gen.engine
 	def get(self):
+		token = self.get_cookie('my_session')
+		client = tornado.httpclient.AsyncHTTPClient()
+		response = yield tornado.gen.Task(client.fetch, url_for_logics + 'change_status', method='POST',
+										  headers={"Content-Type": "application/json"},
+										  body=simplejson.dumps(dict(token=token, status='special')))
+		print(response.code)
 		self.clear_cookie('my_session')
 		self.clear_cookie('my_type')
 		self.redirect('/')
+		self.finish()
 
 class TokenHandler(tornado.web.RequestHandler):
 	def get_token(self, user_id, user_type):
