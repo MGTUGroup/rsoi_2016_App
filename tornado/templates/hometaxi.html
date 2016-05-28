@@ -22,8 +22,16 @@
         }
     </style>
     <script src="http://code.jquery.com/jquery.min.js"></script>
-    <script src="js.cookie.js"></script>
+    <script src="jquery.cookie.js"></script>
     <script>
+
+      function getCookie(name) {
+        var matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+      }
+
       log = function(data){
         $("div#terminal").prepend("</br>" + data);
         console.log(data);
@@ -77,22 +85,23 @@
 
         ws.onmessage = function(evt) {
           alert(evt.data);
-          var user_type = Cookies.get('my_type');
-          alert(user_type);
-          if (user_type == "free")
-          {
-            $("#stop").attr('disabled', true);
-            $("#start").attr('disabled', true);
-          }
-          else if (user_type == "busy")
+          var split_data = evt.data.split(" ");
+          if (split_data[0] == "Received")
           {
             $("#stop").attr('disabled', true);
             $("#start").attr('disabled', false);
+            $('div.well').text((split_data.slice(2, 6)).join(" "));
           }
-          else
+          else if (split_data[0] == "Have")
           {
             $("#stop").attr('disabled', false);
             $("#start").attr('disabled', true);
+          }
+          else
+          {
+            $("#stop").attr('disabled', true);
+            $("#start").attr('disabled', true);
+            $('div.well').text("You do not have active orders");
           }
         };
 
@@ -103,19 +112,37 @@
 
         ws.onopen = function(evt) {
           $("div#message_details").show();
+          user_type = getCookie('my_type');
+          if (user_type == "free")
+          {
+            $("#stop").attr('disabled', true);
+            $("#start").attr('disabled', true);
+          }
+          else
+          {
+            $("#stop").attr('disabled', false);
+            $("#start").attr('disabled', false);
+          }
         };
       });
     </script>
   </head>
 
   <body>
-    <h1>Hello {{ user_name }}!</h1>
-    <div id="terminal"></div>
-    <div id="start_trip">
-      <p><input type="submit" class="new" id="start" value="Start trip" /></p>
+    <div class="col-xs-6 col-sm-4">
+      <div class="well" style="background-color:#5BC9E1; opacity: 0.8">
+          <p>You do not have active orders</p>
+      </div>
     </div>
-    <div id="stop_trip">
-        <p><input type="submit" class="new" id="stop" value="Stop trip" /></p>
+    <div class="col-xs-6 col-sm-4">
+        <h1>Hello {{ user_name }}!</h1>
+        <div id="terminal"></div>
+        <div id="start_trip">
+            <p><input type="submit" class="new" id="start" value="Start trip" /></p>
+        </div>
+        <div id="stop_trip">
+            <p><input type="submit" class="new" id="stop" value="Stop trip" /></p>
+        </div>
     </div>
   </body>
 </html>

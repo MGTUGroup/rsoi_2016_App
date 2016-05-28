@@ -8,7 +8,7 @@
           text-align: center;
           min-width: 500px;
         }
-        input.new {
+         input.new {
             background: -moz-linear-gradient(#D0ECF4, #5BC9E1, #D0ECF4);
             background: -webkit-gradient(linear, 0 0, 0  100%, from(#D0ECF4), to(#D0ECF4), color-stop(0.5, #5BC9E1));
             filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BBD6', endColorstr='#EBFFFF');
@@ -22,8 +22,16 @@
         }
     </style>
     <script src="http://code.jquery.com/jquery.min.js"></script>
-    <script src="js.cookie.js"></script>
+    <script src="jquery.cookie.js"></script>
     <script>
+
+      function getCookie(name) {
+        var matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+      }
+
       log = function(data){
         $("div#terminal").prepend("</br>" +data);
         console.log(data);
@@ -33,6 +41,7 @@
         $("div#message_details").hide()
 
         $("#order").click(function() {
+          //$("#this").attr("disabled", true);
           alert("Your order is processed, wait");
           var x = Math.floor(Math.random() * (100)) + 1;
           var y = Math.floor(Math.random() * (100)) + 1;
@@ -47,6 +56,7 @@
         });
 
         $("#cancel").click(function() {
+          //$("#this").attr("disabled", true);
           $.ajax({
             type: "POST",
             url: "http://localhost:8000/concel_order",
@@ -59,8 +69,28 @@
 
         ws.onmessage = function(evt) {
           alert(evt.data);
-          var user_type = Cookies.get("my_type");
-          alert(user_type);
+          var split_data = evt.data.split(" ");
+          if (split_data[0] == "Expect")
+          {
+            $("#order").attr("disabled", true);
+            $("#cancel").attr("disabled", false);
+            $('div.well').text((split_data.slice(1, 7)).join(" "));
+          }
+          else
+          {
+            $("#order").attr("disabled", false);
+            $("#cancel").attr("disabled", true);
+            $('div.well').text("You did not order a taxi");
+          }
+        };
+
+        ws.onclose = function(evt) {
+          $("div#message_details").empty();
+        };
+
+        ws.onopen = function(evt) {
+          $("div#message_details").show();
+          user_type = getCookie('my_type');
           if (user_type == "accepted")
           {
             $("#order").attr("disabled", true);
@@ -68,31 +98,29 @@
           }
           else
           {
-            $("#order").attr('disabled', false);
-            $("#cancel").attr('disabled', true);
+            $("#order").attr("disabled", false);
+            $("#cancel").attr("disabled", true);
           }
-        };
-
-        ws.onclose = function(evt) {
-          $("div#message_details").empty();
-
-        };
-
-        ws.onopen = function(evt) {
-          $("div#message_details").show();
         };
       });
     </script>
   </head>
 
   <body>
-    <h1>Hello {{ user_name }}!</h1>
-    <div id="terminal"></div>
-      <div id="make_order">
-        <p><input type="submit" class="new" id="order" value="Make an order" /></p>
+    <div class="col-xs-6 col-sm-4">
+      <div class="well" style="background-color:#5BC9E1; opacity: 0.8">
+          <p>You did not order a taxi</p>
       </div>
-      <div id="cancel_order">
-          <p><input type="submit" class="new" id="cancel" value="Cancel the order"  /></p>
-      </div>
+    </div>
+    <div class="col-xs-6 col-sm-4">
+      <h1>Hello {{ user_name }}!</h1>
+      <div id="terminal"></div>
+        <div id="make_order">
+          <p><input type="submit" class="new" id="order" value="Make an order" /></p>
+        </div>
+        <div id="cancel_order">
+          <p><input type="submit" class="new" id="cancel" value="Cancel the order" /></p>
+        </div>
+    </div>
   </body>
 </html>
